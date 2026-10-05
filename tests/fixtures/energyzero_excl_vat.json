@@ -1,0 +1,104 @@
+{
+ "Prices": [
+  {
+   "readingDate": "2026-10-05T00:00:00Z",
+   "price": 0.158797503
+  },
+  {
+   "readingDate": "2026-10-05T01:00:00Z",
+   "price": 0.153605
+  },
+  {
+   "readingDate": "2026-10-05T02:00:00Z",
+   "price": 0.153672501
+  },
+  {
+   "readingDate": "2026-10-05T03:00:00Z",
+   "price": 0.158945
+  },
+  {
+   "readingDate": "2026-10-05T04:00:00Z",
+   "price": 0.187997505
+  },
+  {
+   "readingDate": "2026-10-05T05:00:00Z",
+   "price": 0.22339
+  },
+  {
+   "readingDate": "2026-10-05T06:00:00Z",
+   "price": 0.234
+  },
+  {
+   "readingDate": "2026-10-05T07:00:00Z",
+   "price": 0.1821
+  },
+  {
+   "readingDate": "2026-10-05T08:00:00Z",
+   "price": 0.160292506
+  },
+  {
+   "readingDate": "2026-10-05T09:00:00Z",
+   "price": 0.116747499
+  },
+  {
+   "readingDate": "2026-10-05T10:00:00Z",
+   "price": 0.0759575
+  },
+  {
+   "readingDate": "2026-10-05T11:00:00Z",
+   "price": 0.0302
+  },
+  {
+   "readingDate": "2026-10-05T12:00:00Z",
+   "price": 0.0380725
+  },
+  {
+   "readingDate": "2026-10-05T13:00:00Z",
+   "price": 0.0853125
+  },
+  {
+   "readingDate": "2026-10-05T14:00:00Z",
+   "price": 0.13295
+  },
+  {
+   "readingDate": "2026-10-05T15:00:00Z",
+   "price": 0.190852493
+  },
+  {
+   "readingDate": "2026-10-05T16:00:00Z",
+   "price": 0.230445
+  },
+  {
+   "readingDate": "2026-10-05T17:00:00Z",
+   "price": 0.25866
+  },
+  {
+   "readingDate": "2026-10-05T18:00:00Z",
+   "price": 0.230707496
+  },
+  {
+   "readingDate": "2026-10-05T19:00:00Z",
+   "price": 0.20704
+  },
+  {
+   "readingDate": "2026-10-05T20:00:00Z",
+   "price": 0.18
+  },
+  {
+   "readingDate": "2026-10-05T21:00:00Z",
+   "price": 0.170935
+  },
+  {
+   "readingDate": "2026-10-05T22:00:00Z",
+   "price": 0.1559
+  },
+  {
+   "readingDate": "2026-10-05T23:00:00Z",
+   "price": 0.152562499
+  }
+ ],
+ "intervalType": 4,
+ "fromDate": "2026-10-05T00:00:00Z",
+ "tillDate": "2026-10-05T23:59:59.999Z",
+ "average": 0.16
+}
