@@ -1,5 +1,7 @@
 # EU Power POC (NL day-ahead prices)
 
+[![CI](https://github.com/JonathanThangadurai/eu-power-poc/actions/workflows/ci.yml/badge.svg)](https://github.com/JonathanThangadurai/eu-power-poc/actions/workflows/ci.yml)
+
 **This is a proof of concept**, and a companion to [us-power-poc](https://github.com/JonathanThangadurai/us-power-poc):
 same architecture (scheduled ingestion -> idempotent Postgres storage -> FastAPI -> self-monitoring),
 different market. This one pulls **NL day-ahead electricity prices** instead of CAISO's US wholesale
