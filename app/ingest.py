@@ -1,4 +1,6 @@
-"""Orchestrates one ingestion run: fetch -> normalize -> upsert -> quality checks -> record run."""
+"""Orchestrates one ingestion run: fetch -> normalize -> quality checks -> load (prices
+on pass, quarantine_prices on fail) -> record run. Checks run before anything lands
+in the serving table, not after - a failing batch never touches `prices` at all."""
 
 from __future__ import annotations
 
@@ -48,12 +50,15 @@ async def run_ingest(start: datetime, end: datetime, country: str = config.COUNT
         )
         return {"status": "failure", "error": error}
 
-    rows_loaded = db.upsert_prices(hours)
-    latest = db.max_hour_start(country)
-    checks = run_all_checks(hours, latest)
-
+    # Freshness must judge the batch we just fetched, not whatever is already in
+    # `prices` - checking the table here (now that validation runs before loading)
+    # would just measure how stale the existing data is, not this fetch.
+    latest_in_batch = max((h.hour_start_utc for h in hours), default=None)
+    checks = run_all_checks(hours, latest_in_batch)
     status = "success" if checks["all_passed"] else "failure"
-    db.insert_pipeline_run(
+    rows_loaded = len(hours) if status == "success" else 0
+
+    run_id = db.insert_pipeline_run(
         started_at=started_at,
         status=status,
         finished_at=datetime.now(UTC),
@@ -61,6 +66,15 @@ async def run_ingest(start: datetime, end: datetime, country: str = config.COUNT
         source_http_status=result.http_status,
         checks=checks,
     )
+
+    db.insert_raw_price(run_id, {"rows": result.rows})
+
+    if status == "success":
+        db.upsert_prices(hours)
+    else:
+        failed = ", ".join(c["name"] for c in checks["checks"] if not c["passed"])
+        db.insert_quarantine_batch(run_id, hours, reason=f"failed checks: {failed}")
+
     return {"status": status, "rows_loaded": rows_loaded, "checks": checks}
 
 

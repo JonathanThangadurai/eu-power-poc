@@ -58,23 +58,43 @@ pytest -v   # uses real recorded EnergyZero responses in tests/fixtures/, incl. 
 ruff check .
 ```
 
+## Data lineage: raw -> staging -> mart
+
+Same layering as us-power-poc:
+
+1. **Raw** (`raw_prices`): the untouched EnergyZero response, once per `pipeline_runs` row.
+2. **Staging/conformed** (`prices`): normalized one-row-per-hour records. **A batch only reaches
+   this table if it passes all three quality checks** - checks run before loading, not after.
+3. **Quarantine** (`quarantine_prices`): a batch that fails a check lands here instead, tagged with
+   which check failed and the `pipeline_runs` id that produced it.
+4. **Mart** (`mart_daily_summary` - a SQL view over `prices`): daily avg/min/max/stddev, read by
+   `GET /mart/daily-summary` instead of being recomputed inline.
+
+Schema changes go through Alembic (`migrations/`), not ad-hoc `CREATE TABLE IF NOT EXISTS` - see
+us-power-poc's README for why revision `0001` is deliberately idempotent (safe baseline against a
+database whose tables predate Alembic's adoption).
+
 ## API
 
 - `GET /health`
 - `GET /prices?country=NL&start=...&end=...&limit=&offset=`
 - `GET /price/current?country=NL` - the single price for the current hour; what the Marketplace
   integration calls.
+- `GET /mart/daily-summary?country=NL&limit=&offset=`
 - `GET /pipeline/status`
 - `GET /docs`
 
 ## Monitoring
 
-Same three checks as the CAISO POC, adapted: freshness (is the newest known hour not stale -
-negative "age" is normal here, since day-ahead prices are published ahead of time), duplicate keys,
-and null prices - written to `pipeline_runs`, visible at `/pipeline/status`.
+Same three checks as the CAISO POC, run on the fetched batch **before** it's loaded anywhere:
+freshness (is the newest hour *in this batch* not stale - negative "age" is normal here, since
+day-ahead prices are published ahead of time), duplicate keys, and null prices - written to
+`pipeline_runs`, visible at `/pipeline/status`. A passing batch goes to `prices`; a failing one goes
+to `quarantine_prices` instead. See `tests/test_quarantine.py` for this verified with a crafted
+duplicate-key batch.
 
 ## Known limitations
 
-Same POC-scope limitations as us-power-poc (no Alembic, no mypy, no Prometheus) plus: single
-country (NL), no deployment (local-only by design for this integration), and EnergyZero is a
-retail supplier's republished feed rather than a primary grid-operator source.
+Same POC-scope limitations as us-power-poc (no mypy, no Prometheus) plus: single country (NL), no
+deployment (local-only by design for this integration), and EnergyZero is a retail supplier's
+republished feed rather than a primary grid-operator source.
