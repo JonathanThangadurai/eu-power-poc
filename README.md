@@ -11,6 +11,8 @@ needs a real EU price instead of a hardcoded constant.
 Kept **local-only** (docker-compose), not deployed, since this exists to prove the integration
 works, not to stand as a second public demo.
 
+![Swagger UI, running locally](docs/images/docs-ui.jpg)
+
 ## Attribution
 
 Price data is sourced from **EnergyZero**'s public API (`https://api.energyzero.nl/v1/energyprices`),
